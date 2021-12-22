@@ -23,11 +23,6 @@ type Board struct {
 }
 
 func main() {
-	part1()
-	//part2()
-}
-
-func part1() {
 	fileContents, err := ioutil.ReadFile("input.txt")
 	if err != nil {
 		panic(err)
@@ -50,25 +45,29 @@ func part1() {
 	// Play bingo with drawn numbers and boards.
 	boards := getBoards(scanner)
 	fmt.Printf("Playing with %d boards\n", len(boards))
-	var winningBoard Board
+	var lastWinning Board
+	var firstWinning Board
 	bingo := false
 	for _, num := range draw {
 		for _, board := range boards {
-			if board.MarkNumber(num) && board.IsWinning() {
-				winningBoard = board
-				bingo = true
-				break
+			// Skip already won boards.
+			if board.IsWinning() {
+				continue
 			}
-		}
-		if bingo {
-			break
+
+			// Check if the board is winning and save it if it's the first one.
+			if board.MarkNumber(num) && board.IsWinning() {
+				lastWinning = board
+				if !bingo {
+					bingo = true
+					firstWinning = lastWinning
+				}
+			}
 		}
 	}
 
-	fmt.Println("Winning board is")
-	winningBoard.PrintBoard()
-
-	fmt.Printf("Score is %d!\n", winningBoard.Score())
+	fmt.Printf("First winning board is \n %s \n Score: %d\n", firstWinning.PrintBoard(), firstWinning.Score())
+	fmt.Printf("Last winning board is \n %s \n Score: %d\n", lastWinning.PrintBoard(), lastWinning.Score())
 
 	// Report any errors from the scanner if it stopped
 	if scanner.Err() != nil {
@@ -174,18 +173,20 @@ func (b *Board) IsWinning() bool {
 }
 
 // PrintBoard prints the board on standard output.
-func (b Board) PrintBoard() {
+func (b Board) PrintBoard() string {
+	var result strings.Builder
 	for i, row := range b.rows {
 		for j, col := range row {
 			if b.marks[i][j] {
-				fmt.Printf(" %02d*", col)
+				result.WriteString(fmt.Sprintf(" %02d*", col))
 			} else {
-				fmt.Printf(" %02d ", col)
+				result.WriteString(fmt.Sprintf(" %02d ", col))
 			}
 		}
-		fmt.Println()
+		result.WriteString("\n")
 	}
-	fmt.Println()
+	result.WriteString("\n")
+	return result.String()
 }
 
 // Score calculates and returns the board score by summing all unmarked numbers
