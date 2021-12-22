@@ -1,0 +1,11 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="run day4" type="GoApplicationRunConfiguration" factoryName="Go Application">
+    <module name="aoc" />
+    <working_directory value="$PROJECT_DIR$/day4" />
+    <kind value="PACKAGE" />
+    <package value="aoc/day4" />
+    <directory value="$PROJECT_DIR$" />
+    <filePath value="$PROJECT_DIR$/day4" />
+    <method v="2" />
+  </configuration>
+</component>
